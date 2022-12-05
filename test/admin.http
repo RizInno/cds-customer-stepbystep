@@ -1,0 +1,13 @@
+
+
+### Returns a list of all maintenance notifications
+GET http://localhost:4004/admin/MaintNotification HTTP/1.1
+
+### Create a new maintenance notification
+POST http://localhost:4004/admin/MaintNotification HTTP/1.1
+Content-Type: application/json
+
+{
+    "problemDescription": "Transformer for customer exploded"
+}
+

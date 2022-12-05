@@ -9,6 +9,7 @@ Step-by-step instructions are provided in the [tutorial](./tutorial.md) file.
 1. Install Node.js (https://nodejs.org/en/download/) 
     - Node.js version 14 or 16 is recommended
 2. Install VS Code (https://code.visualstudio.com/download) or any other IDE of your choice
+    - Install REST Client extension
 3. Install Cloud Foundry CLI (https://docs.cloudfoundry.org/cf-cli/install-go-cli.html)
     - Install MultiApps CF CLI Plugin
 4. Install Cloud MTA Build Tool (https://sap.github.io/cloud-mta-build-tool/)
