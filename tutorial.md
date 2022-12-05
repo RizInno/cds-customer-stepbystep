@@ -1,5 +1,8 @@
 # Step-by-step Tutorial
 
+
+## The foundation
+
 1. Create a new Github repository
 2. Clone the empty repository to your local machine
 3. Open the repository in VS Code
@@ -23,8 +26,8 @@
     */
     entity MaintNotification {
         key ID                 : UUID;
-            nr                 : Integer;
-            problemDescription : String(500);
+            nr                 : Integer @UI.ReadOnly;
+            problemDescription : String(500) @UI.MultiLineText;
             createdAt          : Timestamp  @cds.on.insert : $now;
             createdBy          : User       @cds.on.insert : $user;
             modifiedAt         : Timestamp  @cds.on.insert : $now   @cds.on.update : $now;
@@ -60,5 +63,30 @@
     }
     ```
 
+## User Inferface
+Now let's add a user interface to it. 
 
+1. Use the Fiori Extension 
+    - Add Fiori Launchpad Configuration
 
+2. in the original [data model](./db/notification.cds) add `@UI.MultiLineText` to the end of problemDescription.
+
+3. In annotations.cds let's make the following adjustments
+
+    1. In the line item section
+        1. Delete the create and modify date fields
+        2. Change the label for nr to 'Nr'
+        3. Change the label for problemDescription to 'Problem Description'
+
+    2. In the header section
+        1. after the line 'annotate service.MaintNotification with @(' insert another line 
+        ```cds
+        odata.draft.enabled : true,
+        ```
+        That allows the create button to become visible.
+        2. Nr field
+            1. Add the following annotation to make the field read only
+            ```cds
+                   ![@Common.FieldControl] : #ReadOnly
+            ```
+            
