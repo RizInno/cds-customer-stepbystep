@@ -10,10 +10,12 @@
     "express": "^4"
   },
   "devDependencies": {
+    "@sap/ux-specification": "^1.102.13",
     "sqlite3": "^5.0.4"
   },
   "scripts": {
-    "start": "cds run"
+    "start": "cds run",
+    "watch-adminapp": "cds watch --open adminapp/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "engines": {
     "node": "^16.15"
@@ -42,5 +44,8 @@
       "no-console": "off",
       "require-atomic-updates": "off"
     }
-  }
+  },
+  "sapux": [
+    "app/adminapp"
+  ]
 }

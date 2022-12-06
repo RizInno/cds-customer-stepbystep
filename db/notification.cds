@@ -12,7 +12,7 @@ type User : String(255);
 entity MaintNotification {
     key ID                 : UUID;
         nr                 : Integer;
-        problemDescription : String(500);
+        problemDescription : String(500) @UI.MultiLineText;
         createdAt          : Timestamp  @cds.on.insert : $now;
         createdBy          : User       @cds.on.insert : $user;
         modifiedAt         : Timestamp  @cds.on.insert : $now   @cds.on.update : $now;

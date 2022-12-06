@@ -68,10 +68,35 @@ Now let's add a user interface to it.
 
 1. Use the Fiori Extension 
     - Add Fiori Launchpad Configuration
+        - Add Fiori Launchpad Configuration: Command Pallette/Fiori: Open Application Generator
+        - **Application Type:** SAP Fiori elements
+        - **Template:** List Report Page
+        - [Next]
+        - **Data source:** Use a Local CAP Project
+        - **CAP Projec Folder path:** [Select current directory]
+        - **OData Service:** AdminService (Node.js)
+        - [Next]
+        - **Main Entity:** MaintNotification
+        - [Next]
+        - **Module Name :** adminapp !!! This is used to create the directory name and the app identifier !!!
+        - **Application Title:** Maintenance Notifications
+        - **Application Namespace:** riz.inno.tutorial.ui
+        - **Add FLP Configuration:** [Switch to TRUE] 
+         [Next]
+        - **Semantic Object:** custMaintNotif
+        - **Action:** manage
+        - **Title:** Custom Maintenance Notifications
+        - **SubTitle:** manage
 
-2. in the original [data model](./db/notification.cds) add `@UI.MultiLineText` to the end of problemDescription.
+2. start the app with `cds watch`
+3. open the app in the browser with `http://localhost:4004/adminapp/webapp/index.html`. You will see a few shortcomings:
+    - The create button is not visible
+    - The problem description field is not multi line
+    - The nr field is editable
+    - The create and modify date fields are visible
 
-3. In annotations.cds let's make the following adjustments
+
+4. In annotations.cds let's make the following adjustments
 
     1. In the line item section
         1. Delete the create and modify date fields
@@ -89,4 +114,4 @@ Now let's add a user interface to it.
             ```cds
                    ![@Common.FieldControl] : #ReadOnly
             ```
-            
+5. in the original [data model](./db/notification.cds) add `@UI.MultiLineText` to the end of problemDescription.
