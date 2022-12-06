@@ -116,7 +116,53 @@ Now let's add a user interface to it.
             ```
 5. in the original [data model](./db/notification.cds) add `@UI.MultiLineText` to the end of problemDescription.
 
-Cloud Foundry Deployment
+
+## Addition of backend call to S/4 HANA
+1. Download the edmx meta data from api.sap.com
+    1. Go to https://api.sap.com/api/OP_API_MAINTNOTIFICATION/overview
+    2. Click on the 'API Specification' button
+    3. Download the edmx file
+    4. Make sure cds watch is running and drag and drop the file into the root directory of the project
+        - alternatively you can use the `cds import` command
+        - ! Explain that the a) edmx is converted into .csn format and stored in the directory and b) it is referenced in package json
+    5. Optional: To make this service definition now available through the standard CAP mechanism, you can do the following: 
+        1. As the service is now automatically mocked, you can access it via
+        ```http
+        GET http://localhost:4004/op-api-maintnotification/MaintenanceNotification HTTP/1.1
+        ```
+        
+        2. As an alternative or in addition you can explicitly expose an entity by 
+            1. adding the following lines to ./srv/admin.cds
+            ```cds
+            using {OP_API_MAINTNOTIFICATION as notifpackage} from './external/OP_API_MAINTNOTIFICATION.csn';
+
+            service AdminService {
+
+                entity sapMaintNotif as projection on notifpackage.MaintenanceNotification;
+            }
+            ```
+            2. Now you can test the access by performing a GET 
+            ```http
+            GET http://localhost:4004/admin/sapMaintNotif HTTP/1.1
+            ```
+        3. In order to test it with some data, you can provide a data set in the file
+            1. Create a directory in the srv/external directory with the name 'data' (you can also put the file into the 'db/data' directory)
+            2. Create a file with the name 'OP_API_MAINTNOTIFICATION.MaintenanceNotification.csv'
+            3. Add the following content:
+            ```csv
+            MaintenanceNotification,MaintNotifInternalID,NotificationText
+            120132,bla,This is a notification text
+            102213,bl1,Another notification
+            ```
+
+
+
+
+
+
+
+
+## Cloud Foundry Deployment
 1. Add the necessary CAP components via `cds add mta,hana,xsuaa,approuter`
 2. Add the html5 deployment info
     1. Switch to directory `app/adminapp`
