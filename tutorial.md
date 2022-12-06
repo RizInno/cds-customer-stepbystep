@@ -115,3 +115,12 @@ Now let's add a user interface to it.
                    ![@Common.FieldControl] : #ReadOnly
             ```
 5. in the original [data model](./db/notification.cds) add `@UI.MultiLineText` to the end of problemDescription.
+
+Cloud Foundry Deployment
+1. Add the necessary CAP components via `cds add mta,hana,xsuaa,approuter`
+2. Add the html5 deployment info
+    1. Switch to directory `app/adminapp`
+    2. Add the fior deployment configuration with command `fiori add deploy-config`
+    3. Change back to the root directory
+3. run the packaging command `mbt build`
+4. deploy the app with `cf deploy ./mta_archives/cds-customer-stepbystep_1.0.0.mtar`

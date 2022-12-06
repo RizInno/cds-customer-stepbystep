@@ -18,6 +18,9 @@ Step-by-step instructions are provided in the [tutorial](./tutorial.md) file.
     - use command `npm install -g @sap/cds-dk`
 5. Install Fiori Tools
     - use command `npm -g i @sap/ux-ui5-tooling`
+    - use command `npm -g i yo`
+    - use command `npm install -g @sap/generator-fiori`
+    - use command `npm install -g mta`
 
 ## Installation on SAP BTP account
 1. Create a SAP Sub Account
