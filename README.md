@@ -16,6 +16,8 @@ Step-by-step instructions are provided in the [tutorial](./tutorial.md) file.
     - use command `npm install -g mbt`
 5. Install SAP Cloud Application Programming Model (CAP) CLI (https://cap.cloud.sap/docs/get-started/)
     - use command `npm install -g @sap/cds-dk`
+5. Install Fiori Tools
+    - use command `npm -g i @sap/ux-ui5-tooling`
 
 ## Installation on SAP BTP account
 1. Create a SAP Sub Account
