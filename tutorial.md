@@ -117,6 +117,105 @@ Now let's add a user interface to it.
 5. in the original [data model](./db/notification.cds) add `@UI.MultiLineText` to the end of problemDescription.
 
 
+
+
+## Cloud Foundry Deployment
+1. Add the necessary CAP components via `cds add mta,hana,xsuaa`
+2. Add the html5 deployment info
+    1. Switch to directory `app/adminapp`
+    2. Add the Fiori deployment configuration with command `fiori add deploy-config`
+        - **Destination:** cds-customer-stepbystep-srv-api
+    3. Change back to the root directory
+3. run the packaging command `mbt build`
+4. deploy the app with `cf deploy ./mta_archives/cds-customer-stepbystep_1.0.0.mtar`
+5. In the mta.yaml adjust the following line in the `mta.yaml` file
+    ```yaml
+    HTML5Runtime_enabled: false
+    ```
+    to
+    ```yaml
+    HTML5Runtime_enabled: true
+    ```
+6. Add the following to the `manifest.json` file
+    ```json
+    "sap.cloud": {
+
+      "public": true,
+
+      "service": "riz.inno.tutorial.ui"
+
+    }
+    ```
+7. Make sure that you update the `xs-app.json` in the app/adminapp directory with the following content. The name in the previous step must match the destination name in this app router configuration. 
+    ```json
+    {
+      "source": "^/admin/(.*)$",
+      "target": "/admin/$1",
+      "destination": "cds-customer-stepbystep-srv-api",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
+    }
+    ```
+8. Add a UI Content deployer step in the `mta.yaml` file
+    ```yaml
+    - name: cds-customer-stepbystep-ui-deployer
+    type: com.sap.application.content
+    path: .
+    build-parameters:
+        build-result: resources
+        requires:
+        - name: rizinnotutorialuiadminapp
+            artifacts:
+            - rizinnotutorialuiadminapp.zip
+            target-path: resources/
+    ```
+
+9. Add the destination deployer step in the `mta.yaml` file. This is a monster and requires ties to the a) xsuaa service b) your microsservice containing the business logic and c) the repo host. The last of the three is even more complicated as the standard generator changes the service name (cds-customer-stepbystep-html5-srv) to be different than the mta name (cds-customer-stepbystep-repo-host). 
+    ```yaml
+    - name: cds-customer-stepbystep-destination-deployer
+    type: com.sap.application.content
+    parameters:
+        content:
+        instance:
+            destinations:
+            - Authentication: OAuth2UserTokenExchange
+                Name: cds-customer-stepbystep-srv-api
+                TokenServiceInstanceName: cds-customer-stepbystep-auth
+                TokenServiceKeyName: cds-customer-stepbystep-auth-key
+                URL: ~{srv-api/srv-url}
+                sap.cloud.service: riz.inno.tutorial.ui
+            - Name: cds-customer-stepbystep-repo-host
+                ServiceInstanceName: cds-customer-stepbystep-html5-srv
+                ServiceKeyName: cds-customer-stepbystep-html5-srv-key
+                sap.cloud.service: riz.inno.tutorial.ui
+            - Authentication: OAuth2UserTokenExchange
+                Name: cds-customer-stepbystep-auth
+                ServiceInstanceName: cds-customer-stepbystep-auth
+                ServiceKeyName: cds-customer-stepbystep-auth-key
+                sap.cloud.service: riz.inno.tutorial.ui
+            existing_destinations_policy: update
+    build-parameters:
+        no-source: true
+    requires:
+        - name: cds-customer-stepbystep-auth
+        parameters:
+            service-key:
+            name: cds-customer-stepbystep-auth-key
+        - name: cds-customer-stepbystep-repo-host
+        parameters:
+            service-key:
+            name: cds-customer-stepbystep-html5-srv-key
+        - name: srv-api
+        - name: cds-customer-stepbystep-destination-service
+        parameters:
+            content-target: true
+            service-key:
+            name: cds-customer-stepbystep-destination-service-key
+
+    ```
+
+
+
 ## Addition of backend call to S/4 HANA
 1. Download the edmx meta data from api.sap.com
     1. Go to https://api.sap.com/api/OP_API_MAINTNOTIFICATION/overview
@@ -157,54 +256,3 @@ Now let's add a user interface to it.
     6. Install the necessary packages
         1. SAP Cloud SDK Core `npm install @sap-cloud-sdk/http-client @sap-cloud-sdk/util`
 
-
-
-
-
-
-
-
-## Cloud Foundry Deployment
-1. Add the necessary CAP components via `cds add mta,hana,xsuaa,approuter`
-2. Add the html5 deployment info
-    1. Switch to directory `app/adminapp`
-    2. Add the fior deployment configuration with command `fiori add deploy-config`
-    3. Change back to the root directory
-3. run the packaging command `mbt build`
-4. deploy the app with `cf deploy ./mta_archives/cds-customer-stepbystep_1.0.0.mtar`
-5. In the mta.yaml adjust the following line in the `mta.yaml` file
-    ```yaml
-    HTML5Runtime_enabled: false
-    ```
-    to
-    ```yaml
-    HTML5Runtime_enabled: true
-6. Add the following to the `manifest.json` file
-    ```json
-    "sap.cloud": {
-
-      "public": true,
-
-      "service": "riz.inno.tutorial.ui"
-
-    }
-    ```
-7. Add the following section to the destination service in the mta.yaml
-    ```yaml
-          - Authentication: NoAuthentication
-            HTML5.ForwardAuthToken: true
-            Name: cds-customer-stepbystep-srv-api
-            ProxyType: Internet
-            Type: HTTP
-            URL: ~{srv-api/srv-url}
-    ```
-8. Make sure that you update the 'xs-app.json' in the app/adminapp directory with the following content. The name in the previous step must match the destination name in this app router configuration. 
-    ```json
-    {
-      "source": "^/admin/(.*)$",
-      "target": "/admin/$1",
-      "destination": "cds-customer-stepbystep-srv-api",
-      "authenticationType": "xsuaa",
-      "csrfProtection": false
-    }
-    ```

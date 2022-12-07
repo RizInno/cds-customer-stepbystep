@@ -157,5 +157,12 @@
     "sap.fiori": {
         "registrationIds": [],
         "archeType": "transactional"
-    }
+    },
+    "sap.cloud": {
+
+        "public": true,
+  
+        "service": "riz.inno.tutorial.ui"
+  
+      }
 }
