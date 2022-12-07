@@ -120,7 +120,7 @@ Now let's add a user interface to it.
 
 
 ## Cloud Foundry Deployment
-1. Add the necessary CAP components via `cds add mta,hana,xsuaa`
+1. Add the necessary CAP components via `cds add mta,hana,xsuaa --for production`
 2. Add the html5 deployment info
     1. Switch to directory `app/adminapp`
     2. Add the Fiori deployment configuration with command `fiori add deploy-config`
