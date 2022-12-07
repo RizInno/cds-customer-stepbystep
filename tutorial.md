@@ -172,3 +172,18 @@ Now let's add a user interface to it.
     3. Change back to the root directory
 3. run the packaging command `mbt build`
 4. deploy the app with `cf deploy ./mta_archives/cds-customer-stepbystep_1.0.0.mtar`
+
+
+IN mta.yaml
+HTML5Runtime_enabled: true
+
+Add this to the bottom of manifest.json
+    ,
+
+  "sap.cloud": {
+
+      "public": true,
+
+      "service": "riz.inno.tutorial.ui"
+
+  }
