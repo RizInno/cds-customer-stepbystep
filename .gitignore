@@ -29,3 +29,7 @@ mta_archives/
 # IDEs
 # .vscode
 # .idea
+mta.yaml
+
+# Fiori resource folder
+/resources
