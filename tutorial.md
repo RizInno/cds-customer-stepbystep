@@ -154,6 +154,8 @@ Now let's add a user interface to it.
             120132,bla,This is a notification text
             102213,bl1,Another notification
             ```
+    6. Install the necessary packages
+        1. SAP Cloud SDK Core `npm install @sap-cloud-sdk/http-client @sap-cloud-sdk/util`
 
 
 
