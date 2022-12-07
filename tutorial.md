@@ -172,18 +172,39 @@ Now let's add a user interface to it.
     3. Change back to the root directory
 3. run the packaging command `mbt build`
 4. deploy the app with `cf deploy ./mta_archives/cds-customer-stepbystep_1.0.0.mtar`
-
-
-IN mta.yaml
-HTML5Runtime_enabled: true
-
-Add this to the bottom of manifest.json
-    ,
-
-  "sap.cloud": {
+5. In the mta.yaml adjust the following line in the `mta.yaml` file
+    ```yaml
+    HTML5Runtime_enabled: false
+    ```
+    to
+    ```yaml
+    HTML5Runtime_enabled: true
+6. Add the following to the `manifest.json` file
+    ```json
+    "sap.cloud": {
 
       "public": true,
 
       "service": "riz.inno.tutorial.ui"
 
-  }
+    }
+    ```
+7. Add the following section to the destination service in the mta.yaml
+    ```yaml
+          - Authentication: NoAuthentication
+            HTML5.ForwardAuthToken: true
+            Name: cds-customer-stepbystep-srv-api
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
+    ```
+8. Make sure that you update the 'xs-app.json' in the app/adminapp directory with the following content. The name in the previous step must match the destination name in this app router configuration. 
+    ```json
+    {
+      "source": "^/admin/(.*)$",
+      "target": "/admin/$1",
+      "destination": "cds-customer-stepbystep-srv-api",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
+    }
+    ```
