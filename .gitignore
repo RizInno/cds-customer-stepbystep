@@ -34,3 +34,6 @@ mta.yaml
 # Fiori resource folder
 resources/
 dist/
+
+# Environment variables
+.env
