@@ -1,0 +1,176 @@
+_schema-version: "3.1"
+ID: cds-customer-stepbystep
+description: A simple CAP project.
+version: 1.0.0
+modules:
+
+- name: cds-customer-stepbystep-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: cds-customer-stepbystep-auth
+  - name: cds-customer-stepbystep-db
+  - name: cds-customer-stepbystep-destination-service
+  - name: cds-customer-stepbystep-connectivity
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    memory: 256M
+    disk-quota: 512M
+  build-parameters:
+    builder: npm-ci
+
+
+- name: cds-customer-stepbystep-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: cds-customer-stepbystep-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - rizinnotutorialuiadminapp.zip
+      name: rizinnotutorialuiadminapp
+      target-path: resources/
+
+- name: rizinnotutorialuiadminapp
+  type: html5
+  path: app/adminapp
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+
+- name: cds-customer-stepbystep-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: cds-customer-stepbystep-db
+  parameters:
+    buildpack: nodejs_buildpack
+
+- name: cds-customer-stepbystep-ui-deployer
+  type: com.sap.application.content
+  path: .
+  build-parameters:
+    build-result: resources
+    requires:
+      - name: rizinnotutorialuiadminapp
+        artifacts:
+          - rizinnotutorialuiadminapp.zip
+        target-path: resources/
+
+- name: cds-customer-stepbystep-destination-deployer
+  type: com.sap.application.content
+  parameters:
+    content:
+      instance:
+        destinations:
+          - Authentication: OAuth2UserTokenExchange
+            Name: cds-customer-stepbystep-srv-api
+            TokenServiceInstanceName: cds-customer-stepbystep-auth
+            TokenServiceKeyName: cds-customer-stepbystep-auth-key
+            URL: ~{srv-api/srv-url}
+            sap.cloud.service: riz.inno.tutorial.ui
+          - Name: cds-customer-stepbystep-repo-host
+            ServiceInstanceName: cds-customer-stepbystep-html5-srv
+            ServiceKeyName: cds-customer-stepbystep-html5-srv-key
+            sap.cloud.service: riz.inno.tutorial.ui
+          - Authentication: OAuth2UserTokenExchange
+            Name: cds-customer-stepbystep-auth
+            ServiceInstanceName: cds-customer-stepbystep-auth
+            ServiceKeyName: cds-customer-stepbystep-auth-key
+            sap.cloud.service: riz.inno.tutorial.ui
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
+  requires:
+    - name: cds-customer-stepbystep-auth
+      parameters:
+        service-key:
+          name: cds-customer-stepbystep-auth-key
+    - name: cds-customer-stepbystep-repo-host
+      parameters:
+        service-key:
+          name: cds-customer-stepbystep-html5-srv-key
+    - name: srv-api
+    - name: cds-customer-stepbystep-destination-service
+      parameters:
+        content-target: true
+        service-key:
+          name: cds-customer-stepbystep-destination-service-key
+
+
+resources:
+
+- name: cds-customer-stepbystep-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: cds-customer-stepbystep-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+
+- name: cds-customer-stepbystep-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+
+- name: cds-customer-stepbystep-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: cds-customer-stepbystep-html5-srv
+    service-plan: app-host
+
+- name: cds-customer-stepbystep-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: cds-customer-stepbystep-destination-service
+    service-plan: lite
+
+- name: cds-customer-stepbystep-connectivity
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: connectivity
+    service-plan: lite
+  
+
+       
+
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+
+
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npx -p @sap/cds-dk cds build --production
