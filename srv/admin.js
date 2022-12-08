@@ -30,9 +30,9 @@ class AdminService extends cds.ApplicationService {
                 dataBlock.NotificationType = '11'
                 dataBlock.NotificationText = req.data.problemDescription
 
-                let selResult = await eam.run(SELECT.from('MaintenanceNotification').limit(1))
+                //let selResult = await eam.run(SELECT.from('MaintenanceNotification').limit(1))
 
-                console.log('SELECT RESULTS:', selResult)
+                //console.log('SELECT RESULTS:', selResult)
 
                 // Assemble CAP query
                 let insertQuery = INSERT.into('MaintenanceNotification', [dataBlock])
