@@ -397,25 +397,14 @@ Now let's add a user interface to it.
             dataBlock.NotificationType = '11'
             dataBlock.NotificationText = req.data.problemDescription
 
-            let selResult = await eam.run(SELECT.from('MaintenanceNotification').limit(1))
-
-            console.log('SELECT RESULTS:', selResult)
-
             // Assemble CAP query
             let insertQuery = INSERT.into('MaintenanceNotification', [dataBlock])
 
             // Execute query against backend system
             let insResult = await eam.tx(req).run(insertQuery)
 
-            // SAP result output
-            console.log('SAP Result:', insResult)
-
             // Add the notificiation number to the storage in DB
             req.data.nr = insResult.MaintenanceNotification
-
-            // Output of result data structure
-            console.log('.data:', req.data)
-
 
         } else {
             console.log('SAP Create Notification is NOT triggers as profile is:', process.env.NODE_ENV)
