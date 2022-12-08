@@ -1,13 +1,44 @@
 
 
+GET http://localhost:4004/admin/$metadata
+
+
 ### Returns a list of all maintenance notifications
 GET http://localhost:4004/admin/MaintNotification HTTP/1.1
 
+
+### Returns a list of all DRAFT maintenance notifications
+GET http://localhost:4004/admin/MaintNotification?$filter=(IsActiveEntity eq false or SiblingEntity/IsActiveEntity eq null) HTTP/1.1
+
+
 ### Create a new maintenance notification
+# @name PostDraftRecord
 POST http://localhost:4004/admin/MaintNotification HTTP/1.1
 Content-Type: application/json
 
 {
     "problemDescription": "Transformer for customer exploded"
+    
 }
 
+
+### Submit Draft record to active
+POST http://localhost:4004/admin/MaintNotification(ID={{PostDraftRecord.response.body.ID}},IsActiveEntity=false)/AdminService.draftActivate
+Content-Type: application/json
+
+{}
+
+
+### Update the record
+PATCH http://localhost:4004/admin/MaintNotification(ID={{PostDraftRecord.response.body.ID}},IsActiveEntity=true) HTTP/1.1
+Content-Type: application/json
+
+{
+    "problemDescription": "Transformer updated"
+}
+
+
+#############################################################
+
+### Returns a list of all maintenance notifications from SAP
+GET http://localhost:4004/admin/sapMaintNotif HTTP/1.1
