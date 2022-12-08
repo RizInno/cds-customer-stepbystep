@@ -382,44 +382,47 @@ Now let's add a user interface to it.
         GET http://localhost:4004/admin/sapMaintNotif HTTP/1.1
         ```    
 
-    9. Add the following handler to the AdminService
+    9. Add the following handler to the AdminService. **!!! Insure you have set the following `cds.env.features.fetch_csrf = true` for all calls to SAP backend systems !!!**
     ```js
-        // Handler to happen before the creation of a record
-        this.before("CREATE", 'MaintNotification', async (req) => {
+     // Handler to happen before the creation of a record
+    this.before("CREATE", 'MaintNotification', async (req) => {
 
-            console.log("NODE_ENV", process.env.NODE_ENV)
-            console.log("CDS_ENV", process.env.NODE_ENV)
-            console.log('cds.env', cds.env)
+        if (process.env.NODE_ENV == 'production') {
+
+            console.log('Setting CSRF, currently:', cds.env.features.fetch_csrf)
+            cds.env.features.fetch_csrf = true
+
+            // Assign and adjust data 
+            let dataBlock = {}
+            dataBlock.NotificationType = '11'
+            dataBlock.NotificationText = req.data.problemDescription
+
+            let selResult = await eam.run(SELECT.from('MaintenanceNotification').limit(1))
+
+            console.log('SELECT RESULTS:', selResult)
+
+            // Assemble CAP query
+            let insertQuery = INSERT.into('MaintenanceNotification', [dataBlock])
+
+            // Execute query against backend system
+            let insResult = await eam.tx(req).run(insertQuery)
+
+            // SAP result output
+            console.log('SAP Result:', insResult)
+
+            // Add the notificiation number to the storage in DB
+            req.data.nr = insResult.MaintenanceNotification
+
+            // Output of result data structure
+            console.log('.data:', req.data)
 
 
-            if (process.env.NODE_ENV == 'Production') {
-
-                // Assign and adjust data 
-                let dataBlock = {}
-                dataBlock.NotificationType = '11'
-                dataBlock.NotificationText = req.data.problemDescription
-
-                // Assemble CAP query
-                let insertQuery = INSERT.into('MaintenanceNotification', [dataBlock])
-
-                // Execute query against backend system
-                insResult = await eam.tx(req).run(insertQuery)
-
-                // SAP result output
-                console.log('SAP Result:', insResult)
-
-                // Add the notificiation number to the storage in DB
-                req.data.nr = insResult.d.MaintenanceNotification
-
-                // Output of result data structure
-                console.log('.data:', req.data)
+        } else {
+            console.log('SAP Create Notification is NOT triggers as profile is:', process.env.NODE_ENV)
+        }
 
 
-            } else {
-                console.log('SAP Create Notification is NOT triggers as profile is:', process.env.NODE_ENV)
-            }
-
-            return req
-        });
+        return req
+    });
 
     ```
