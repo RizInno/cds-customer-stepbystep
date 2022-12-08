@@ -1,0 +1,35 @@
+@sap-system-url={{$dotenv sap_system}}
+@sap-username={{$dotenv sap_user}}
+@sap-pw={{$dotenv sap_password}}
+
+
+### Read one maintenance Notififcation
+# @name ReadRequests
+GET {{sap-system-url}}/sap/opu/odata/sap/API_MAINTNOTIFICATION/MaintenanceNotification?$top=1&$format=json
+Authorization: Basic {{sap-username}} {{sap-pw}}
+X-CSRF-TOKEN: FETCH
+
+### Read a specific maintenance notification
+GET http://appsrv16-eam.rizing.io:8000/sap/opu/odata/sap/API_MAINTNOTIFICATION/MaintenanceNotification('10000000')?$format=json
+Authorization: Basic {{sap-username}} {{sap-pw}}
+
+
+### METADATA
+GET http://appsrv16-eam.rizing.io:8000/sap/opu/odata/sap/API_MAINTNOTIFICATION/$metadata
+Authorization: Basic {{sap-username}} {{sap-pw}}
+
+
+
+
+#####
+POST {{sap-system-url}}/sap/opu/odata/sap/API_MAINTNOTIFICATION/MaintenanceNotification
+Authorization: Basic {{sap-username}} {{sap-pw}}
+Content-Type: application/json
+X-CSRF-TOKEN: {{ReadRequests.response.headers.x-csrf-token}}
+Cookie: 
+
+{
+    "NotificationType":"11",
+    "NotificationText":"Transformer for customer exploded"
+}
+
