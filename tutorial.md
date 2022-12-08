@@ -26,7 +26,7 @@
     */
     entity MaintNotification {
         key ID                 : UUID;
-            nr                 : Integer @UI.ReadOnly;
+            nr                 : String(20);
             problemDescription : String(500) @UI.MultiLineText;
             createdAt          : Timestamp  @cds.on.insert : $now;
             createdBy          : User       @cds.on.insert : $user;
@@ -109,11 +109,13 @@ Now let's add a user interface to it.
         odata.draft.enabled : true,
         ```
         That allows the create button to become visible.
-        2. Nr field
-            1. Add the following annotation to make the field read only
-            ```cds
-                   ![@Common.FieldControl] : #ReadOnly
-            ```
+
+        2. Change the Nr field to read only by adding the following annotation to make the field read only
+        ```cds
+                ![@Common.FieldControl] : #ReadOnly
+        ```
+
+
 5. in the original [data model](./db/notification.cds) add `@UI.MultiLineText` to the end of problemDescription.
 
 
@@ -156,6 +158,11 @@ Now let's add a user interface to it.
       "csrfProtection": false
     }
     ```
+8. Limit the amount of consumed memory and disk space for the service. In `mta.yaml` specify the parameters:
+    ```yaml
+          memory: 256M
+          disk-quota: 512M
+
 8. Add a UI Content deployer step in the `mta.yaml` file
     ```yaml
     - name: cds-customer-stepbystep-ui-deployer
