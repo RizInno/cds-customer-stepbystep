@@ -1,73 +1,87 @@
 {
-    "name": "cds-customer-stepbystep",
-    "version": "1.0.0",
-    "description": "A simple CAP project.",
-    "repository": "<Add your repository here>",
-    "license": "UNLICENSED",
-    "private": true,
-    "dependencies": {
-        "@sap/cds": "^6",
-        "express": "^4",
-        "@sap/xssec": "^3",
-        "passport": "^0",
-        "hdb": "^0.19.0"
+  "name": "cds-customer-stepbystep",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap-cloud-sdk/http-client": "^2.12.0",
+    "@sap-cloud-sdk/util": "^2.12.0",
+    "@sap/cds": "^6",
+    "@sap/xssec": "^3",
+    "express": "^4",
+    "hdb": "^0.19.0",
+    "passport": "^0"
+  },
+  "devDependencies": {
+    "@sap/ux-specification": "^1.102.13",
+    "rimraf": "^3.0.2",
+    "sqlite3": "^5.0.4"
+  },
+  "scripts": {
+    "start": "cds run",
+    "watch-adminapp": "cds watch --open adminapp/webapp/index.html?sap-ui-xx-viewCache=false",
+    "undeploy": "cf undeploy cds-customer-stepbystep --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+  },
+  "engines": {
+    "node": "^16.15"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "es2020": true,
+      "node": true,
+      "jest": true,
+      "mocha": true
     },
-    "devDependencies": {
-        "@sap/ux-specification": "^1.102.13",
-        "sqlite3": "^5.0.4",
-        "rimraf": "^3.0.2"
+    "globals": {
+      "SELECT": true,
+      "INSERT": true,
+      "UPDATE": true,
+      "DELETE": true,
+      "CREATE": true,
+      "DROP": true,
+      "CDL": true,
+      "CQL": true,
+      "CXL": true,
+      "cds": true
     },
-    "scripts": {
-        "start": "cds run",
-        "watch-adminapp": "cds watch --open adminapp/webapp/index.html?sap-ui-xx-viewCache=false",
-        "undeploy": "cf undeploy cds-customer-stepbystep --delete-services --delete-service-keys --delete-service-brokers",
-        "build": "rimraf resources mta_archives && mbt build --mtar archive",
-        "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
-    },
-    "engines": {
-        "node": "^16.15"
-    },
-    "eslintConfig": {
-        "extends": "eslint:recommended",
-        "env": {
-            "es2020": true,
-            "node": true,
-            "jest": true,
-            "mocha": true
-        },
-        "globals": {
-            "SELECT": true,
-            "INSERT": true,
-            "UPDATE": true,
-            "DELETE": true,
-            "CREATE": true,
-            "DROP": true,
-            "CDL": true,
-            "CQL": true,
-            "CXL": true,
-            "cds": true
-        },
-        "rules": {
-            "no-console": "off",
-            "require-atomic-updates": "off"
-        }
-    },
-    "sapux": [
-        "app/adminapp"
-    ],
-    "cds": {
-        "requires": {
-            "[production]": {
-                "auth": {
-                    "kind": "xsuaa"
-                },
-                "db": {
-                    "kind": "hana-cloud"
-                }
-            },
-            "db": {
-                "kind": "sql"
-            }
-        }
+    "rules": {
+      "no-console": "off",
+      "require-atomic-updates": "off"
     }
+  },
+  "sapux": [
+    "app/adminapp"
+  ],
+  "cds": {
+    "requires": {
+      "[production]": {
+        "auth": {
+          "kind": "xsuaa"
+        },
+        "db": {
+          "kind": "hana-cloud"
+        },
+        "OP_API_MAINTNOTIFICATION": {
+          "kind": "odata-v2",
+          "model": "srv/external/OP_API_MAINTNOTIFICATION",
+          "credentials": {
+						"destination": "ehs-api-service",
+						"path":"/sap/opu/odata/sap/API_MAINTNOTIFICATION"
+					}
+        }
+      },
+      "db": {
+        "kind": "sql"
+      },
+      "OP_API_MAINTNOTIFICATION": {
+        "kind": "odata-v2",
+        "model": "srv/external/OP_API_MAINTNOTIFICATION"
+      }
+    }
+  }
 }
