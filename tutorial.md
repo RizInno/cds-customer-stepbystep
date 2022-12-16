@@ -66,9 +66,9 @@
 ## User Inferface
 Now let's add a user interface to it. 
 
-1. Use the Fiori Extension 
-    - Add Fiori Launchpad Configuration
-        - Add Fiori Launchpad Configuration: Command Pallette/Fiori: Open Application Generator
+1. Use the Fiori Extension to create the necessary Fiori Application artifacts 
+    - Add Fiori Application 
+        - Got to the Command Pallette (In BAS or VSCode follow menu path View/Commmand Palette) and look for `Fiori: Open Application Generator`
         - **Application Type:** SAP Fiori elements
         - **Template:** List Report Page
         - [Next]
