@@ -58,16 +58,17 @@ modules:
   parameters:
     buildpack: nodejs_buildpack
 
-- name: cds-customer-stepbystep-ui-deployer
-  type: com.sap.application.content
-  path: .
-  build-parameters:
-    build-result: resources
-    requires:
-      - name: rizinnotutorialuiadminapp
-        artifacts:
-          - rizinnotutorialuiadminapp.zip
-        target-path: resources/
+# Duplicate with module cds-customer-stepbystep-app-content
+#- name: cds-customer-stepbystep-ui-deployer
+#  type: com.sap.application.content
+#  path: .
+#  build-parameters:
+#    build-result: resources
+#    requires:
+#      - name: rizinnotutorialuiadminapp
+#        artifacts:
+#          - rizinnotutorialuiadminapp.zip
+#        target-path: resources/
 
 - name: cds-customer-stepbystep-destination-deployer
   type: com.sap.application.content
