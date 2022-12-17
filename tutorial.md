@@ -221,6 +221,44 @@ Now let's add a user interface to it.
 
     ```
 
+11. The last piece is the addition of the a) destination b) connectivity and c) html5-apps-repo. Please make sure they show up properly in the in the `resources:` section of the `mta.yaml` file. You can also compare your file with the one in this repo. [./mta.yaml](./mta.yaml)
+    ```yaml
+
+    - name: cds-customer-stepbystep-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+        service: html5-apps-repo
+        service-name: cds-customer-stepbystep-html5-srv
+        service-plan: app-host
+
+    - name: cds-customer-stepbystep-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+        config:
+        HTML5Runtime_enabled: true
+        init_data:
+            instance:
+            destinations:
+            - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+
+            existing_destinations_policy: update
+        version: 1.0.0
+        service: destination
+        service-name: cds-customer-stepbystep-destination-service
+        service-plan: lite
+
+    - name: cds-customer-stepbystep-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+        service: connectivity
+        service-plan: lite
+    ```
+
+
 ## Addition of backend call to S/4 HANA
 1. Download the edmx meta data from api.sap.com
     1. Go to https://api.sap.com/api/OP_API_MAINTNOTIFICATION/overview
