@@ -1,8 +1,90 @@
 # Integration with on-premise S/4 system
+1. Download the EDMX from Business Accelerator hub https://api.sap.com/api/OP_API_MAINTNOTIFICATION/overview
+2. Use `cds import` to import the edmx file into the project
+3.  Generate the wiring to allow the Cloud Foundry application to connect to the S/4 system
+    1. Adjust the package.json to include the following information in the SAP service
+
+    ```json
+        "csrf": true,
+        "csrfInBatch": false,
+    ```
+    2. Adjust the package.json to include the following crendentials section
+    ```json
+        "credentials": {
+          "destination": "s4v-gateway-basic",
+          "path": "/sap/opu/odata/sap/API_MAINTNOTIFICATION"
+        }
+    ```
+
+    3. Make sure the nodejs service in the mta yaml has depedencies to 
+        1. the destination service
+        2. The connectivity service
+    4. Install 
+        1. `@sap-cloud-sdk/resilience`
+        2. `@sap-cloud-sdk/http-client`
+        3. `@sap-cloud-sdk/util`
+        4. `@sap-cloud-sdk/connectivit`
+    5. Create a file called `admin.js` in the srv directory
+    ```js
+        const cds = require("@sap/cds");
+
+        /**
+        * Class defintion for AdminService
+        */
+        class AdminService extends cds.ApplicationService {
+            async init() {
+
+                // connect to backend service
+                let eam = null 
+
+                if (process.env.NODE_ENV == 'production') {
+                    eam = await cds.connect.to("OP_API_MAINTNOTIFICATION");
+                }
 
 
+                // Read handler
+                this.on(["READ"], "sapMaintNotif", async (req) => {
+
+                    //console.log(cds.env)
+                    return await eam.tx(req).run(req.query);
+
+                });
+
+                // Handler to happen before the creation of a record
+                this.before("CREATE", 'MaintenanceNotifications', async (req) => {
+
+                    if (process.env.NODE_ENV == 'production') {
+
+                        // Assign and adjust data 
+                        let dataBlock = {}
+                        dataBlock.NotificationType = '11'
+                        dataBlock.NotificationText = req.data.problemDescription
+
+                        // Assemble CAP query
+                        let insertQuery = INSERT.into('MaintenanceNotification', [dataBlock])
+
+                        // Execute query against backend system
+                        let insResult = await eam.tx(req).run(insertQuery)
+
+                        // Add the notificiation number to the storage in DB
+                        req.data.s4Id = insResult.MaintenanceNotification
+
+                    } else {
+                        console.log('SAP Create Notification is NOT triggers as profile is:', process.env.NODE_ENV)
+                    }
 
 
+                    return req
+                });
+
+                // ensure to call super.init()
+                await super.init();
+            }
+        }
+        module.exports = AdminService;
+    ```
+
+4. Save, Deploy and test
 
 
 
