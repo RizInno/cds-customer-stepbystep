@@ -53,6 +53,11 @@ Now let's add a user interface to it.
         ```cds
                 ![@Common.FieldControl] : #ReadOnly
         ```
+9. (Optional) If you want to change the title of the Object Page away from the ugle GUID, you can add the following annotation to your annotations.cds file
+    ```cds
+    annotate service.MaintenanceNotification with @(UI.HeaderInfo: {TypeName: 'Notification', TypeNamePlural:'Notifications' ,Title : {Value: problemDescription }});
+    ```
+
 
 **Good Job, you have created a Fiori Elements UI for your CAP service.**
 
