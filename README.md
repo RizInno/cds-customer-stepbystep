@@ -2,7 +2,7 @@
 
 This Tutorial provides a quick step by step guide to create a simple SAP CAP (Node.js) based app. This app will collect the necessary information for a SAP Maintenance Notification from a customer and store it in a HANA Cloud database. Subsequent to storing it in the HANA table it will create a matching record in the associated SAP system. 
 
-Step-by-step instructions are provided in the [tutorial](./tutorial.md) file.
+Step-by-step instructions are provided in the [tutorial](./doc/tutorial.md) file.
 
 # Pre-requisites
 ## Installation on developer machine
