@@ -2,6 +2,8 @@
 The Tutorial is split into 4 section. Each section builds on each other. 
 The four sections are:
 
+Prerequisites can be found [here](./prerequisites.md).
+
 1. [Foundation - Data Model and OData Service](1_foundation.md)
 2. [Creation of a Fiori Elements UI](2_fiori_elements_ui.md)
 3. [Cloud Foundry Deployment](3_cloud_foundry_deployment.md)
@@ -9,4 +11,5 @@ The four sections are:
 
 ### Resources: 
 - you can also look at a good blog to accomplish a similar result: https://blogs.sap.com/?p=1777348?source=email-global-notification-bp-new-in-tag-followed
+- Reference to the Fiori Elements Learning Journey: https://blogs.sap.com/2023/08/17/developing-an-sap-fiori-elements-app-based-on-a-cap-odata-v4-service-free-learning-journey
 

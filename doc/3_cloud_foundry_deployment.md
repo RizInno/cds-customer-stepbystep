@@ -205,5 +205,6 @@
             "undeploy": "cf undeploy cds-customer-stepbystep --delete-services --delete-service-keys --delete-service-brokers"
            ```
 
+4. The last piece that has to be consistent is the match of xs-app.json OData route and the destination name created in the mta.yaml. 
            
 [back to the Tutorial Overview](./tutorial.md)

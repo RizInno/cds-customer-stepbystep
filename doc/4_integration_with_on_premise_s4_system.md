@@ -64,7 +64,7 @@
                         let insertQuery = INSERT.into('MaintenanceNotification', [dataBlock])
 
                         // Execute query against backend system
-                        let insResult = await eam.tx(req).run(insertQuery)
+                        let insResult = await eam.run(insertQuery)
 
                         // Add the notificiation number to the storage in DB
                         req.data.s4Id = insResult.MaintenanceNotification
