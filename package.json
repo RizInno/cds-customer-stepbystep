@@ -8,8 +8,8 @@
   "dependencies": {
     "@sap-cloud-sdk/http-client": "^3.0.1",
     "@sap-cloud-sdk/util": "^3.0.1",
-    "@sap/cds": "^6",
-    "@sap/xssec": "^3",
+    "@sap/cds": "^7.9.2",
+    "@sap/xssec": "^4.1.0",
     "express": "^4",
     "hdb": "^0.19.0",
     "passport": "^0"
@@ -27,7 +27,7 @@
     "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
   },
   "engines": {
-    "node": "^16.15"
+    "node": ">=18.0.0"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
